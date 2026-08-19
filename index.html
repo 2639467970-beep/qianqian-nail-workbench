@@ -1,232 +1,58 @@
-<!doctype html>
-<html lang="zh-CN">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#b96f83">
-<link rel="manifest" href="./manifest.webmanifest">
-<link rel="icon" href="./icon.svg">
-<title>钱钱美甲工作台</title>
-<style>
-:root{
-  --pink:#c77b90;--pink2:#f4dce3;--pink3:#fff5f7;--text:#29252a;--muted:#8c858a;
-  --line:#eee7ea;--bg:#f8f7f8;--card:#fff;--green:#4aa36a;--orange:#e99b3d;--blue:#5f8fdc;
-}
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text)}
-button,input,select{font:inherit}
-button{cursor:pointer}
-.app{min-height:100vh;display:flex}
-.sidebar{width:238px;flex:0 0 238px;background:#fff;border-right:1px solid var(--line);position:fixed;left:0;top:0;bottom:0;z-index:30;display:flex;flex-direction:column}
-.logo{height:68px;display:flex;align-items:center;padding:0 22px;border-bottom:1px solid var(--line);font-size:18px;font-weight:800;color:#a84f68}
-.nav-scroll{padding:18px 10px;overflow:auto}
-.group-title{font-size:12px;color:#a49ca1;padding:0 12px 8px;margin-top:4px}
-.nav-item{width:100%;height:44px;border:0;background:transparent;color:#595258;border-radius:10px;text-align:left;padding:0 14px;display:flex;align-items:center;gap:11px;margin-bottom:3px;font-size:14px}
-.nav-item:hover{background:#faf1f4}.nav-item.active{background:linear-gradient(90deg,#f7e0e7,#f0cfd8);color:#8f4058;font-weight:700}
-.nav-icon{width:22px;text-align:center;font-size:19px;color:#81777e}
-.nav-item.active .nav-icon{color:#b14f6b}
-.side-bottom{margin-top:auto;border-top:1px solid var(--line);padding:16px 22px;color:#9a9297;font-size:11px;line-height:1.6}
-.content{margin-left:238px;min-width:0;width:calc(100% - 238px)}
-.topbar{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 28px;position:sticky;top:0;z-index:20}
-.page-title{font-size:20px;font-weight:800}.top-right{margin-left:auto;display:flex;gap:18px;color:#6e676c;font-size:13px}
-.mobile-menu{display:none;border:0;background:transparent;font-size:24px;margin-right:10px}
-.main{padding:24px 28px 36px;max-width:1400px;margin:auto}
-.hero{display:flex;align-items:end;justify-content:space-between;margin-bottom:18px}.hero h1{margin:0;font-size:25px}.hero p{margin:6px 0 0;color:var(--muted);font-size:13px}.today{font-size:12px;color:var(--muted)}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.kpi{background:#fff;border:1px solid #f0eaed;border-radius:16px;padding:18px;box-shadow:0 3px 14px #3c1c2508}
-.kpi-head{display:flex;align-items:center;gap:10px;color:#777075;font-size:13px}.kpi-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:19px;background:var(--pink3);color:#cf5f7d}.kpi:nth-child(2) .kpi-icon{background:#fff5e8;color:var(--orange)}.kpi:nth-child(3) .kpi-icon{background:#eff9f0;color:var(--green)}.kpi:nth-child(4) .kpi-icon{background:#eef4ff;color:var(--blue)}
-.kpi-value{font-size:27px;font-weight:800;margin:12px 0 5px}.kpi-foot{font-size:12px;color:var(--muted)}.up{color:#e25378;font-weight:700}
-.section-card{background:#fff;border:1px solid #f0eaed;border-radius:16px;margin-top:18px;box-shadow:0 3px 14px #3c1c2507;overflow:hidden}.section-head{height:58px;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid var(--line)}.section-head h2{font-size:16px;margin:0}.section-head .more{margin-left:auto;color:#9b9197;font-size:12px;border:0;background:none}
-.appt-list{padding:0 20px}.appt-row{display:grid;grid-template-columns:72px 46px minmax(160px,1.4fr) 1fr 100px 80px;align-items:center;min-height:78px;border-bottom:1px solid #f1edef;gap:12px}.appt-row:last-child{border-bottom:0}.time{font-size:14px;font-weight:700}.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#f3dbe2;color:#a64d67;font-weight:800}.customer-name{font-weight:700;font-size:14px}.phone{font-size:11px;color:#a0999e;margin-top:4px}.service{font-size:13px;font-weight:600}.staff{font-size:12px;color:#80777d}.status{border:1px solid;border-radius:8px;padding:7px 9px;background:#fff;font-size:12px;min-width:72px}.pending{color:#d84e70;border-color:#e99aad}.done{color:#42985d;border-color:#86c89b}.cancel{color:#888;border-color:#ccc}
-.schedule{padding:0 20px 18px;overflow-x:auto}.schedule table{width:100%;min-width:760px;border-collapse:collapse;font-size:12px}.schedule th,.schedule td{border-bottom:1px solid #f1edef;padding:12px 8px;text-align:center}.schedule th:first-child,.schedule td:first-child{text-align:left;font-weight:700}.shift{display:inline-block;border-radius:20px;padding:5px 9px;font-size:11px}.all{background:#fde4ec;color:#ad4f68}.am{background:#edf8e9;color:#4f9347}.pm{background:#fff1dd;color:#b87928}.off{background:#f1f1f3;color:#8d8a8d}
-.bottom-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.small-kpi{background:#fff;border:1px solid #f0eaed;border-radius:16px;padding:18px;display:flex;align-items:center;gap:13px}.small-icon{width:42px;height:42px;border-radius:13px;background:#fff1f5;color:#d25576;display:grid;place-items:center;font-size:20px}.small-kpi b{font-size:19px}.small-kpi small{display:block;color:#8f888d;margin-bottom:5px}
-.page{display:none}.page.active{display:block}.placeholder{padding:40px;background:#fff;border:1px solid var(--line);border-radius:16px;color:#777}
-.toolbar{display:flex;gap:10px;margin-bottom:14px}.toolbar input{flex:1;border:1px solid #ddd4d9;background:#fff;border-radius:10px;padding:11px 12px}.primary{border:0;background:var(--pink);color:#fff;border-radius:10px;padding:11px 15px}.table-wrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:15px}.table{width:100%;min-width:700px;border-collapse:collapse;font-size:12px}.table th,.table td{padding:12px 10px;border-bottom:1px solid #f0eaed;text-align:left}.empty{text-align:center;color:#aaa;padding:28px}
-.modal{position:fixed;inset:0;background:#0006;display:none;align-items:flex-end;justify-content:center;z-index:60}.modal.show{display:flex}.modal-box{width:100%;max-width:560px;background:#fff;border-radius:18px 18px 0 0;padding:20px}.modal-box h3{margin:0 0 14px}.form{display:grid;grid-template-columns:1fr 1fr;gap:10px}.form input,.form select{border:1px solid #ddd4d9;border-radius:10px;padding:11px;background:#fff}.full{grid-column:1/-1}.actions{grid-column:1/-1;display:flex;gap:8px;margin-top:4px}.actions button{flex:1;border:0;padding:11px;border-radius:10px}.secondary{background:#f2eff1}.primary2{background:#111827;color:#fff}
-@media(max-width:900px){.sidebar{width:205px;flex-basis:205px}.content{margin-left:205px;width:calc(100% - 205px)}.kpis{grid-template-columns:1fr 1fr}.appt-row{grid-template-columns:58px 42px minmax(120px,1fr) 90px 75px}.staff{display:none}}
-@media(max-width:650px){
- .sidebar{width:190px;transform:translateX(0)}.content{margin-left:190px;width:calc(100% - 190px)}.topbar{padding:0 14px}.main{padding:16px 12px}.top-right{display:none}.page-title{font-size:16px}.hero h1{font-size:20px}.today{display:none}.kpis{grid-template-columns:1fr 1fr;gap:8px}.kpi{padding:12px}.kpi-value{font-size:21px}.kpi-head{font-size:11px}.appt-row{grid-template-columns:48px 38px minmax(120px,1fr) 72px}.service,.staff{display:none}.bottom-kpis{grid-template-columns:1fr}.logo{padding:0 15px;font-size:16px}.nav-item{font-size:13px}
-}
-</style>
-</head>
-<body>
-<div class="app">
-<aside class="sidebar">
-  <div class="logo">钱钱美甲工作台</div>
-  <div class="nav-scroll">
-    <div class="group-title">概览</div>
-    <button class="nav-item active" data-page="home"><span class="nav-icon">▦</span>首页</button>
-    <div class="group-title">预约 · 排班</div>
-    <button class="nav-item" data-page="appointments"><span class="nav-icon">□</span>预约管理</button>
-    <button class="nav-item" data-page="new"><span class="nav-icon">⊕</span>新建预约</button>
-    <button class="nav-item" data-page="todayShift"><span class="nav-icon">◷</span>今日班次</button>
-    <button class="nav-item" data-page="schedule"><span class="nav-icon">▣</span>排班管理</button>
-    <div class="group-title">顾客 · 会员</div>
-    <button class="nav-item" data-page="customers"><span class="nav-icon">♙</span>顾客档案</button>
-    <button class="nav-item" data-page="members"><span class="nav-icon">▭</span>会员扣卡</button>
-    <button class="nav-item" data-page="gifts"><span class="nav-icon">♔</span>打卡送礼</button>
-    <div class="group-title">数据 · 设置</div>
-    <button class="nav-item" data-page="staff"><span class="nav-icon">♙</span>技师数据</button>
-    <button class="nav-item" data-page="services"><span class="nav-icon">✂</span>服务项目</button>
-    <button class="nav-item" data-page="products"><span class="nav-icon">◇</span>产品统计</button>
-    <button class="nav-item" data-page="analytics"><span class="nav-icon">▥</span>数据分析</button>
-    <button class="nav-item" data-page="settings"><span class="nav-icon">⚙</span>设置</button>
-  </div>
-  <div class="side-bottom">◇　钱钱美甲工作台<br>© 2026 Ver 0.3</div>
-</aside>
-
-<div class="content">
-<header class="topbar"><button class="mobile-menu">☰</button><div id="pageTitle" class="page-title">钱钱美甲工作台</div><div class="top-right"><span id="clock">09:42</span><span>▣ 100%</span></div></header>
-<main class="main">
-<section id="home" class="page active">
-  <div class="hero"><div><h1>欢迎回来，老板 👋</h1><p>今日经营状况一览</p></div><div class="today" id="dateText"></div></div>
-  <div class="kpis">
-    <div class="kpi"><div class="kpi-head"><div class="kpi-icon">□</div>今日预约</div><div class="kpi-value" id="mAppt">0</div><div class="kpi-foot">较昨日 <span class="up">+2 ↗</span></div></div>
-    <div class="kpi"><div class="kpi-head"><div class="kpi-icon">¥</div>今日营收</div><div class="kpi-value" id="mRevenue">¥0</div><div class="kpi-foot">较昨日 <span class="up">+860 ↗</span></div></div>
-    <div class="kpi"><div class="kpi-head"><div class="kpi-icon">♙</div>今日新客</div><div class="kpi-value" id="mNew">0</div><div class="kpi-foot">较昨日 <span class="up">+1 ↗</span></div></div>
-    <div class="kpi"><div class="kpi-head"><div class="kpi-icon">♙</div>在班技师</div><div class="kpi-value" id="mStaff">0</div><div class="kpi-foot">较昨日 <span>持平</span></div></div>
-  </div>
-  <div class="section-card"><div class="section-head"><h2>今日待办预约</h2><button class="more" data-page="appointments">查看全部 ›</button></div><div id="todayList" class="appt-list"></div></div>
-  <div class="section-card"><div class="section-head"><h2>本周排班快览</h2><button class="more">‹　 <b>本周</b>　›</button></div><div class="schedule"><table><thead><tr><th>技师</th><th>周一</th><th>周二</th><th>周三</th><th>周四</th><th>周五</th><th>周六</th><th>周日</th></tr></thead><tbody id="scheduleBody"></tbody></table></div></div>
-  <div class="bottom-kpis"><div class="small-kpi"><div class="small-icon">¥</div><div><small>本月营收</small><b id="monthRevenue">¥0</b></div></div><div class="small-kpi"><div class="small-icon">□</div><div><small>本月预约数</small><b id="monthCount">0</b></div></div><div class="small-kpi"><div class="small-icon">↗</div><div><small>本年营收</small><b id="yearRevenue">¥0</b></div></div></div>
-</section>
-<section id="appointments" class="page"><div class="hero"><div><h1>预约管理</h1><p>查看、确认和完成全部预约</p></div></div><div class="toolbar"><input id="search" placeholder="搜索顾客姓名或手机号"><button class="primary" id="addBtn">＋ 新建预约</button></div><div id="apptTable"></div></section>
-<section id="customers" class="page"><div class="hero"><div><h1>顾客档案</h1><p>会员等级、储值、积分与累计消费</p></div></div><div id="customerTable"></div></section>
-<section id="members" class="page"><div class="hero"><div><h1>会员扣卡</h1><p>储值余额与项目次数管理</p></div></div><div class="placeholder">会员扣卡模块已预留，下一版可继续接入储值扣款、次数卡和流水记录。</div></section>
-<section id="staff" class="page"><div class="hero"><div><h1>技师数据</h1><p>业绩、完成单数和班次</p></div></div><div id="staffTable"></div></section>
-<section id="services" class="page"><div class="hero"><div><h1>服务项目</h1><p>价目表与项目分类</p></div></div><div id="serviceTable"></div></section>
-<section id="products" class="page"><div class="hero"><div><h1>产品统计</h1><p>产品销售与消耗</p></div></div><div class="placeholder">产品统计模块已预留，可继续接入库存、采购、销售和毛利。</div></section>
-<section id="analytics" class="page"><div class="hero"><div><h1>数据分析</h1><p>经营趋势和历史汇总</p></div></div><div class="placeholder">数据分析模块已预留，后续接入月度、年度趋势图和技师排名。</div></section>
-<section id="settings" class="page"><div class="hero"><div><h1>设置</h1><p>门店与系统基础设置</p></div></div><div class="placeholder">设置模块已预留，后续接入门店资料、技师、会员规则和自动化设置。</div></section>
-<section id="todayShift" class="page"><div class="hero"><div><h1>今日班次</h1><p>查看今日在班技师</p></div></div><div id="todayShiftList"></div></section>
-<section id="schedule" class="page"><div class="hero"><div><h1>排班管理</h1><p>本周技师排班</p></div></div><div class="placeholder">排班管理模块已预留，下一版可直接编辑每位技师每日班次。</div></section>
-<section id="gifts" class="page"><div class="hero"><div><h1>打卡送礼</h1><p>会员打卡与赠礼记录</p></div></div><div class="placeholder">打卡送礼模块已预留。</div></section>
-<section id="new" class="page"><div class="hero"><div><h1>新建预约</h1><p>快速创建今日或未来预约</p></div></div><button class="primary" id="newPageBtn">＋ 新建预约</button></section>
-</main>
-</div></div>
-
-<div id="modal" class="modal"><div class="modal-box"><h3>新建预约</h3><div class="form">
-<input id="fName" placeholder="顾客姓名"><input id="fPhone" placeholder="手机号"><input id="fDate" type="date"><input id="fTime" type="time">
-<select id="fService"></select><select id="fStaff"></select><input id="fAmount" class="full" type="number" min="0" placeholder="实付金额">
-<div class="actions"><button id="cancelModal" class="secondary">取消</button><button id="saveAppt" class="primary2">保存预约</button></div>
-</div></div></div>
-
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#b96f83"><link rel="manifest" href="manifest.webmanifest"><title>钱钱美甲工作台</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f7f6f7;color:#332d31;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}button,input,select{font:inherit}button{cursor:pointer}.side{position:fixed;left:0;top:0;bottom:0;width:230px;background:#fff;border-right:1px solid #eee7ea}.logo{height:68px;padding:23px 20px;border-bottom:1px solid #eee7ea;font-weight:800;color:#a64f68}.nav{padding:14px 10px}.group{font-size:11px;color:#aaa;padding:9px 12px 5px}.nav button{display:block;width:100%;height:42px;border:0;background:#fff;text-align:left;border-radius:9px;padding:0 12px;color:#625a60}.nav button.active,.nav button:hover{background:#f5dfe6;color:#913e57;font-weight:700}.ico{display:inline-block;width:26px;font-size:17px}.content{margin-left:230px}.top{height:68px;background:#fff;border-bottom:1px solid #eee7ea;padding:0 25px;display:flex;align-items:center;position:sticky;top:0;z-index:10}.top b{font-size:19px}.time{margin-left:auto;color:#777;font-size:12px}.main{padding:24px;max-width:1400px;margin:auto}.page{display:none}.page.active{display:block}.hero{display:flex;justify-content:space-between;align-items:end;margin-bottom:18px}.hero h1{margin:0;font-size:24px}.hero p{margin:6px 0 0;color:#91898e;font-size:13px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card,.panel{background:#fff;border:1px solid #eee7ea;border-radius:15px;box-shadow:0 2px 12px #00000008}.metric{padding:18px}.metric small{color:#8e878b}.metric b{display:block;font-size:26px;margin-top:10px}.panel{margin-top:16px;overflow:hidden}.head{height:56px;border-bottom:1px solid #eee7ea;padding:0 18px;display:flex;align-items:center}.right{margin-left:auto}.btn{border:0;border-radius:9px;padding:9px 13px}.primary{background:#b96f83;color:#fff}.light{background:#f2eef0}.danger{background:#fff0f2;color:#bd3e5b}.tablewrap{overflow:auto}.table{width:100%;min-width:700px;border-collapse:collapse;font-size:12px}.table th,.table td{padding:12px;border-bottom:1px solid #f1edef;text-align:left;white-space:nowrap}.actions{display:flex;gap:5px}.tag{border:1px solid;border-radius:7px;background:#fff;padding:5px 8px;font-size:11px}.pending{color:#d4506c;border-color:#e7a0ad}.done{color:#49955e;border-color:#91c8a0}.cancel{color:#888;border-color:#ccc}.search{display:flex;gap:9px;margin-bottom:12px}.search input{flex:1;padding:10px;border:1px solid #ddd5d9;border-radius:9px}.empty{text-align:center;padding:30px;color:#aaa}.week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;padding:15px}.day{border:1px solid #eee7ea;border-radius:9px;padding:10px;min-height:90px}.shift{display:block;margin-top:8px;padding:5px;border-radius:7px;background:#f7e6eb;color:#994d63;font-size:11px}.settings{display:grid;grid-template-columns:1fr 1fr;gap:12px}.setting{padding:16px}.setting h3{font-size:14px;margin:0 0 8px}.setting input,.setting select{width:100%;padding:10px;border:1px solid #ddd5d9;border-radius:9px}.hint{font-size:11px;color:#999;margin-top:6px}.modal{position:fixed;inset:0;background:#0006;display:none;align-items:center;justify-content:center;z-index:50}.modal.show{display:flex}.box{width:min(620px,94vw);background:#fff;border-radius:16px;padding:20px}.form{display:grid;grid-template-columns:1fr 1fr;gap:9px}.form label{font-size:11px;color:#777}.form input,.form select{width:100%;padding:10px;margin-top:4px;border:1px solid #ddd5d9;border-radius:9px}.mactions{grid-column:1/-1;display:flex;gap:8px;margin-top:8px}.mactions button{flex:1}@media(max-width:850px){.side{width:195px}.content{margin-left:195px}.cards{grid-template-columns:1fr 1fr}.settings{grid-template-columns:1fr}}@media(max-width:600px){.side{width:180px}.content{margin-left:180px}.main{padding:12px}.cards{gap:7px}.metric{padding:12px}.metric b{font-size:21px}.week{min-width:700px}}
+</style></head><body>
+<aside class="side"><div class="logo" id="logo">钱钱美甲工作台</div><div class="nav">
+<div class="group">概览</div><button data-page="home" class="active">▦　首页</button>
+<div class="group">预约 · 排班</div><button data-page="appointments">□　预约管理</button><button data-new>⊕　新建预约</button><button data-page="today">◷　今日班次</button><button data-page="schedule">▣　排班管理</button>
+<div class="group">顾客 · 会员</div><button data-page="customers">♙　顾客档案</button><button data-page="members">▭　会员扣卡</button>
+<div class="group">数据 · 设置</div><button data-page="staff">♙　技师数据</button><button data-page="services">✂　服务项目</button><button data-page="products">◇　产品统计</button><button data-page="analytics">▥　数据分析</button><button data-page="settings">⚙　设置</button>
+</div></aside>
+<div class="content"><header class="top"><b id="title">钱钱美甲工作台</b><span class="time" id="clock"></span></header><main class="main">
+<section id="home" class="page active"><div class="hero"><div><h1>经营看板</h1><p>今日门店经营情况</p></div></div><div class="cards"><div class="card metric"><small>今日预约</small><b id="mA">0</b></div><div class="card metric"><small>今日营收</small><b id="mR">¥0</b></div><div class="card metric"><small>今日新客</small><b id="mN">0</b></div><div class="card metric"><small>在班技师</small><b id="mS">0</b></div></div><div class="panel"><div class="head"><b>今日待办预约</b><button class="btn light right" data-page="appointments">查看全部</button></div><div id="homeA"></div></div><div class="panel"><div class="head"><b>本周排班</b></div><div id="week" class="week"></div></div></section>
+<section id="appointments" class="page"><div class="hero"><div><h1>预约管理</h1><p>新增、编辑、删除、切换状态</p></div><button class="btn primary" data-new>＋ 新建预约</button></div><div class="search"><input id="q" placeholder="搜索姓名、手机号、项目"><button class="btn light" id="clearq">清空</button></div><div class="panel"><div id="appointmentsTable" class="tablewrap"></div></div></section>
+<section id="customers" class="page"><div class="hero"><div><h1>顾客档案</h1><p>所有顾客资料都可以自己修改</p></div><button class="btn primary" data-add="customer">＋ 新增顾客</button></div><div class="panel"><div id="customersTable" class="tablewrap"></div></div></section>
+<section id="staff" class="page"><div class="hero"><div><h1>技师数据</h1><p>技师资料、班次、业绩可自定义</p></div><button class="btn primary" data-add="staff">＋ 新增技师</button></div><div class="panel"><div id="staffTable" class="tablewrap"></div></div></section>
+<section id="services" class="page"><div class="hero"><div><h1>服务项目</h1><p>项目名称、分类、价格都可以修改</p></div><button class="btn primary" data-add="service">＋ 新增项目</button></div><div class="panel"><div id="serviceTable" class="tablewrap"></div></div></section>
+<section id="products" class="page"><div class="hero"><div><h1>产品统计</h1><p>产品也可以自行添加和维护</p></div><button class="btn primary" data-add="product">＋ 新增产品</button></div><div class="panel"><div id="productTable" class="tablewrap"></div></div></section>
+<section id="today" class="page"><div class="hero"><div><h1>今日班次</h1></div></div><div id="todayList"></div></section>
+<section id="schedule" class="page"><div class="hero"><div><h1>排班管理</h1><p>直接修改技师班次</p></div></div><div class="panel"><div id="scheduleTable" class="tablewrap"></div></div></section>
+<section id="members" class="page"><div class="hero"><div><h1>会员扣卡</h1><p>会员余额、等级、积分</p></div></div><div class="panel" style="padding:18px">会员基础资料可在顾客档案直接编辑。扣卡流水模块已预留。</div></section>
+<section id="analytics" class="page"><div class="hero"><div><h1>数据分析</h1></div></div><div id="analyticsBox" class="cards"></div></section>
+<section id="settings" class="page"><div class="hero"><div><h1>系统设置</h1><p>你可以自己定义系统里的常用内容</p></div></div><div class="settings">
+<div class="card setting"><h3>门店名称</h3><input id="shop"></div><div class="card setting"><h3>会员等级</h3><input id="levels" placeholder="普通,银卡,金卡,钻卡"><div class="hint">用逗号分隔</div></div>
+<div class="card setting"><h3>班次类型</h3><input id="shifts" placeholder="全天班,早班,午班"><div class="hint">用逗号分隔</div></div><div class="card setting"><h3>订单状态</h3><input id="statuses" placeholder="待确认,已完成,已取消"><div class="hint">用逗号分隔</div></div>
+<div class="card setting"><h3>积分规则</h3><input id="rate" type="number" step="0.1" min="0"><div class="hint">消费1元获得多少积分</div></div><div class="card setting"><h3>保存</h3><button class="btn primary" id="saveSettings">保存系统设置</button> <button class="btn light" id="reset">恢复演示数据</button></div>
+</div></section>
+</main></div>
+<div id="modal" class="modal"><div class="box"><h3 id="mtitle">编辑</h3><div id="form" class="form"></div><div class="mactions"><button class="btn light" id="cancel">取消</button><button class="btn primary" id="save">保存</button></div></div></div>
 <script>
-(function(){
-const KEY="qianqian_nail_workbench_v03",today=()=>new Date().toISOString().slice(0,10);
-const seed={
- appointments:[
- {id:1,date:today(),time:"10:00",name:"张女士",phone:"13800001234",service:"纯色美甲",staff:"佳佳",status:"待确认",amount:198},
- {id:2,date:today(),time:"11:30",name:"李小姐",phone:"13900005678",service:"美睫-自然款",staff:"思思",status:"待确认",amount:268},
- {id:3,date:today(),time:"13:00",name:"王女士",phone:"13700002222",service:"渐变美甲",staff:"小美",status:"已完成",amount:328},
- {id:4,date:today(),time:"15:00",name:"陈女士",phone:"13600008888",service:"卸甲+护理",staff:"佳佳",status:"已完成",amount:168},
- {id:5,date:today(),time:"16:30",name:"赵小姐",phone:"18800009999",service:"法式美甲",staff:"思思",status:"已取消",amount:268}
- ],
- customers:[
- {name:"张女士",phone:"13800001234",level:"银卡",balance:500,points:0,total:0},
- {name:"李小姐",phone:"13900005678",level:"普通",balance:0,points:0,total:0},
- {name:"王女士",phone:"13700002222",level:"金卡",balance:800,points:328,total:328},
- {name:"陈女士",phone:"13600008888",level:"银卡",balance:300,points:168,total:168},
- {name:"赵小姐",phone:"18800009999",level:"普通",balance:0,points:0,total:0}
- ],
- staff:[
- {name:"佳佳",position:"美甲师",shift:"全天班",revenue:168,completed:1},
- {name:"思思",position:"美睫师",shift:"午班",revenue:0,completed:0},
- {name:"小美",position:"美甲师",shift:"全天班",revenue:328,completed:1},
- {name:"小雨",position:"美睫师",shift:"早班",revenue:0,completed:0}
- ],
- services:[
- {block:"美甲",cat:"基础",name:"纯色美甲",price:198},
- {block:"美睫",cat:"基础",name:"美睫-自然款",price:268},
- {block:"美甲",cat:"进阶",name:"渐变美甲",price:328},
- {block:"护理",cat:"基础",name:"卸甲+护理",price:168},
- {block:"美甲",cat:"进阶",name:"法式美甲",price:268}
- ],
- analytics:{todayRevenue:496,monthRevenue:38680,yearRevenue:268900,lastDate:today()}
-};
-let db;try{db=JSON.parse(localStorage.getItem(KEY)||"null")||seed}catch(e){db=seed}
-const save=()=>localStorage.setItem(KEY,JSON.stringify(db));
-const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-const cls=s=>s==="待确认"?"pending":s==="已完成"?"done":"cancel";
-
-function resetDay(){if(db.analytics.lastDate!==today()){db.analytics.todayRevenue=0;db.analytics.lastDate=today();save()}}
-function render(){
- resetDay();
- const arr=db.appointments.filter(a=>a.date===today());
- document.getElementById("mAppt").textContent=arr.length;
- document.getElementById("mRevenue").textContent="¥"+db.analytics.todayRevenue;
- document.getElementById("mNew").textContent=db.customers.filter(c=>c.total===0).length;
- document.getElementById("mStaff").textContent=db.staff.length;
- document.getElementById("monthRevenue").textContent="¥"+db.analytics.monthRevenue.toLocaleString();
- document.getElementById("monthCount").textContent=db.appointments.filter(a=>a.date.slice(0,7)===today().slice(0,7)).length;
- document.getElementById("yearRevenue").textContent="¥"+db.analytics.yearRevenue.toLocaleString();
- document.getElementById("dateText").textContent=new Date().toLocaleDateString("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"long"});
-
- document.getElementById("todayList").innerHTML=arr.length?arr.sort((a,b)=>a.time.localeCompare(b.time)).map(a=>`
- <div class="appt-row"><div class="time">${a.time}</div><div class="avatar">${esc(a.name).slice(0,1)}</div>
- <div><div class="customer-name">${esc(a.name)}</div><div class="phone">${a.phone.slice(0,3)}****${a.phone.slice(-4)}</div></div>
- <div class="service">${esc(a.service)}</div><div class="staff">技师：${esc(a.staff)}</div>
- <button class="status ${cls(a.status)}" data-status="${a.id}">${a.status}</button></div>`).join(""):"<div class='empty'>今日暂无预约</div>";
-
- const shifts=[["佳佳",["全天班","全天班","全天班","全天班","全天班","午班","休息"]],["思思",["午班","午班","午班","午班","午班","全天班","上午班"]],["小美",["全天班","休息","全天班","全天班","全天班","午班","休息"]],["小雨",["上午班","上午班","上午班","上午班","上午班","全天班","休息"]]];
- document.getElementById("scheduleBody").innerHTML=shifts.map(r=>"<tr><td>"+r[0]+"</td>"+r[1].map(x=>`<td><span class="shift ${x.includes("全天")?"all":x.includes("午")?"pm":x.includes("上午")?"am":"off"}">${x}</span></td>`).join("")+"</tr>").join("");
-
- const q=(document.getElementById("search")?.value||"").trim(),aa=db.appointments.filter(a=>!q||a.name.includes(q)||a.phone.includes(q));
- document.getElementById("apptTable").innerHTML='<div class="table-wrap"><table class="table"><tr><th>日期</th><th>时间</th><th>顾客</th><th>项目</th><th>技师</th><th>金额</th><th>状态</th></tr>'+
- aa.map(a=>`<tr><td>${a.date}</td><td>${a.time}</td><td>${esc(a.name)}</td><td>${esc(a.service)}</td><td>${esc(a.staff)}</td><td>¥${a.amount}</td><td><button class="status ${cls(a.status)}" data-status="${a.id}">${a.status}</button></td></tr>`).join("")+"</table></div>";
-
- document.getElementById("customerTable").innerHTML='<div class="table-wrap"><table class="table"><tr><th>姓名</th><th>手机号</th><th>等级</th><th>储值余额</th><th>积分</th><th>累计消费</th></tr>'+
- db.customers.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.phone)}</td><td>${esc(c.level)}</td><td>¥${c.balance}</td><td>${c.points}</td><td>¥${c.total}</td></tr>`).join("")+"</table></div>";
-
- document.getElementById("staffTable").innerHTML='<div class="table-wrap"><table class="table"><tr><th>技师</th><th>职位</th><th>班次</th><th>营业额业绩</th><th>完成单数</th></tr>'+
- db.staff.map(s=>`<tr><td>${esc(s.name)}</td><td>${esc(s.position)}</td><td>${esc(s.shift)}</td><td>¥${s.revenue}</td><td>${s.completed}</td></tr>`).join("")+"</table></div>";
-
- document.getElementById("serviceTable").innerHTML='<div class="table-wrap"><table class="table"><tr><th>服务板块</th><th>子分类</th><th>项目名称</th><th>参考单价</th></tr>'+
- db.services.map(s=>`<tr><td>${esc(s.block)}</td><td>${esc(s.cat)}</td><td>${esc(s.name)}</td><td>¥${s.price}</td></tr>`).join("")+"</table></div>";
-
- document.getElementById("todayShiftList").innerHTML=db.staff.map(s=>`<div class="section-card" style="padding:16px"><b>${esc(s.name)}</b>　${esc(s.position)}　<span class="shift ${s.shift==="全天班"?"all":s.shift==="午班"?"pm":"am"}">${esc(s.shift)}</span></div>`).join("");
- document.querySelectorAll("[data-status]").forEach(b=>b.onclick=()=>toggleStatus(+b.dataset.status));
-}
-function toggleStatus(id){
- const a=db.appointments.find(x=>x.id===id);if(!a)return;
- const old=a.status,next=old==="待确认"?"已完成":old==="已完成"?"已取消":"待确认",n=+a.amount||0;
- const c=db.customers.find(x=>x.phone===a.phone),s=db.staff.find(x=>x.name===a.staff);
- if(old!=="已完成"&&next==="已完成"){db.analytics.todayRevenue+=n;db.analytics.monthRevenue+=n;db.analytics.yearRevenue+=n;if(c){c.total+=n;c.points+=Math.round(n)}if(s){s.revenue+=n;s.completed++}}
- if(old==="已完成"&&next!=="已完成"){db.analytics.todayRevenue=Math.max(0,db.analytics.todayRevenue-n);db.analytics.monthRevenue=Math.max(0,db.analytics.monthRevenue-n);db.analytics.yearRevenue=Math.max(0,db.analytics.yearRevenue-n);if(c){c.total=Math.max(0,c.total-n);c.points=Math.max(0,c.points-Math.round(n))}if(s){s.revenue=Math.max(0,s.revenue-n);s.completed=Math.max(0,s.completed-1)}}
- a.status=next;save();render();
-}
-function showPage(id){
- document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));
- document.querySelectorAll(".nav-item").forEach(n=>n.classList.toggle("active",n.dataset.page===id));
- const labels={home:"钱钱美甲工作台",appointments:"预约管理",new:"新建预约",todayShift:"今日班次",schedule:"排班管理",customers:"顾客档案",members:"会员扣卡",gifts:"打卡送礼",staff:"技师数据",services:"服务项目",products:"产品统计",analytics:"数据分析",settings:"设置"};
- document.getElementById("pageTitle").textContent=labels[id]||"钱钱美甲工作台";
- window.scrollTo(0,0);render();
- if(id==="new")openModal();
-}
-function openModal(){
- document.getElementById("modal").classList.add("show");
- fDate.value=today();fTime.value="16:00";
- fService.innerHTML=db.services.map(s=>`<option value="${esc(s.name)}" data-price="${s.price}">${esc(s.name)} · ¥${s.price}</option>`).join("");
- fStaff.innerHTML=db.staff.map(s=>`<option>${esc(s.name)}</option>`).join("");
- fAmount.value=fService.selectedOptions[0]?.dataset.price||"";
-}
-function closeModal(){document.getElementById("modal").classList.remove("show")}
-document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>showPage(b.dataset.page));
-document.querySelectorAll("[data-page]").forEach(b=>{if(!b.classList.contains("nav-item"))b.onclick=()=>showPage(b.dataset.page)});
-document.getElementById("addBtn").onclick=openModal;document.getElementById("newPageBtn").onclick=openModal;document.getElementById("cancelModal").onclick=closeModal;document.getElementById("search").oninput=render;
-document.getElementById("fService").onchange=()=>fAmount.value=fService.selectedOptions[0]?.dataset.price||"";
-document.getElementById("saveAppt").onclick=()=>{
- const name=fName.value.trim(),phone=fPhone.value.trim(),date=fDate.value,time=fTime.value,service=fService.value,staff=fStaff.value,amount=+fAmount.value||0;
- if(!name||!phone||!date||!time){alert("请填写顾客姓名、手机号、日期和时间");return}
- db.appointments.push({id:Date.now(),date,time,name,phone,service,staff,status:"待确认",amount});
- if(!db.customers.some(c=>c.phone===phone))db.customers.push({name,phone,level:"普通",balance:0,points:0,total:0});
- save();closeModal();showPage("appointments");
-};
-document.getElementById("modal").onclick=e=>{if(e.target===e.currentTarget)closeModal()};
-function tick(){document.getElementById("clock").textContent=new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"});resetDay()}
-setInterval(tick,1000);tick();save();render();
-if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
-})();
-</script>
-</body>
-</html>
+const K="qianqian_v04",T=()=>new Date().toISOString().slice(0,10);
+const D={shop:"钱钱美甲工作台",levels:["普通","银卡","金卡","钻卡"],shifts:["全天班","早班","午班"],statuses:["待确认","已完成","已取消"],rate:1,
+appointments:[{id:1,date:T(),time:"10:00",name:"张女士",phone:"13800001234",service:"纯色美甲",staff:"佳佳",status:"待确认",amount:198},{id:2,date:T(),time:"11:30",name:"李小姐",phone:"13900005678",service:"美睫-自然款",staff:"思思",status:"待确认",amount:268},{id:3,date:T(),time:"13:00",name:"王女士",phone:"13700002222",service:"渐变美甲",staff:"小美",status:"已完成",amount:328}],
+customers:[{id:1,name:"张女士",phone:"13800001234",level:"银卡",balance:500,points:0,total:0},{id:2,name:"王女士",phone:"13700002222",level:"金卡",balance:800,points:328,total:328}],
+staff:[{id:1,name:"佳佳",position:"美甲师",shift:"全天班",revenue:0,completed:0},{id:2,name:"思思",position:"美睫师",shift:"午班",revenue:0,completed:0},{id:3,name:"小美",position:"美甲师",shift:"全天班",revenue:328,completed:1}],services:[{id:1,block:"美甲",cat:"基础",name:"纯色美甲",price:198},{id:2,block:"美睫",cat:"基础",name:"美睫-自然款",price:268},{id:3,block:"美甲",cat:"进阶",name:"渐变美甲",price:328}],products:[]};
+let db=JSON.parse(localStorage.getItem(K)||"null")||D,S=()=>localStorage.setItem(K,JSON.stringify(db)),E=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])), C=s=>s==="已完成"?"done":s==="已取消"?"cancel":"pending";
+const key=t=>t==="appointment"?"appointments":t==="customer"?"customers":t==="staff"?"staff":t==="service"?"services":"products";
+const defs={appointment:[["name","顾客姓名","text"],["phone","手机号","text"],["date","日期","date"],["time","时间","time"],["service","服务项目","service"],["staff","负责技师","staff"],["status","订单状态","status"],["amount","实付金额","number"]],customer:[["name","姓名","text"],["phone","手机号","text"],["level","会员等级","level"],["balance","储值余额","number"],["points","累计积分","number"],["total","累计消费金额","number"]],staff:[["name","技师姓名","text"],["position","职位","text"],["shift","班次类型","shift"],["revenue","营业额业绩","number"],["completed","完成单数","number"]],service:[["block","服务板块","text"],["cat","子分类","text"],["name","项目名称","text"],["price","参考单价","number"]],product:[["name","产品名称","text"],["cat","分类","text"],["price","售价","number"],["stock","库存","number"]]};
+let edit=null;
+function render(){let a=db.appointments.filter(x=>x.date===T()),r=a.filter(x=>x.status==="已完成").reduce((n,x)=>n+(+x.amount||0),0);mA.textContent=a.length;mR.textContent="¥"+r;mN.textContent=db.customers.filter(c=>!db.appointments.some(x=>x.phone===c.phone&&x.status==="已完成")).length;mS.textContent=db.staff.length;
+homeA.innerHTML='<table class=table><tr><th>时间</th><th>顾客</th><th>项目</th><th>技师</th><th>金额</th><th>状态</th></tr>'+a.map(x=>`<tr><td>${x.time}</td><td>${E(x.name)}</td><td>${E(x.service)}</td><td>${E(x.staff)}</td><td>¥${x.amount}</td><td><button class="tag ${C(x.status)}" data-status="${x.id}">${x.status}</button></td></tr>`).join("")+"</table>";
+week.innerHTML=["周一","周二","周三","周四","周五","周六","周日"].map(d=>`<div class=day><b>${d}</b>${db.staff.map(s=>`<span class=shift>${E(s.name)} · ${E(s.shift)}</span>`).join("")}</div>`).join("");
+let q=document.getElementById("q")?.value||"",aa=db.appointments.filter(x=>[x.name,x.phone,x.service,x.staff].some(v=>v.includes(q)));appointmentsTable.innerHTML='<table class=table><tr><th>日期</th><th>时间</th><th>顾客</th><th>项目</th><th>技师</th><th>金额</th><th>状态</th><th>操作</th></tr>'+aa.map(x=>`<tr><td>${x.date}</td><td>${x.time}</td><td>${E(x.name)}</td><td>${E(x.service)}</td><td>${E(x.staff)}</td><td>¥${x.amount}</td><td><button class="tag ${C(x.status)}" data-status="${x.id}">${x.status}</button></td><td class=actions><button class="btn light" data-edit="appointment" data-id="${x.id}">编辑</button><button class="btn danger" data-del="appointment" data-id="${x.id}">删除</button></td></tr>`).join("")+"</table>";
+table("customers",["姓名","手机号","等级","余额","积分","累计消费"],db.customers,c=>[c.name,c.phone,c.level,"¥"+c.balance,c.points,"¥"+c.total],"customersTable","customer");
+table("staff",["姓名","职位","班次","营业额","完成单数"],db.staff,c=>[c.name,c.position,c.shift,"¥"+c.revenue,c.completed],"staffTable","staff");
+table("services",["板块","分类","项目","价格"],db.services,c=>[c.block,c.cat,c.name,"¥"+c.price],"serviceTable","service");
+table("products",["产品","分类","售价","库存"],db.products,c=>[c.name,c.cat,"¥"+c.price,c.stock],"productTable","product");
+todayList.innerHTML=db.staff.map(s=>`<div class=panel style="padding:15px;margin:8px 0"><b>${E(s.name)}</b>　${E(s.position)}　<span class=shift style="display:inline-block">${E(s.shift)}</span></div>`).join("");
+scheduleTable.innerHTML='<table class=table><tr><th>技师</th><th>周一</th><th>周二</th><th>周三</th><th>周四</th><th>周五</th><th>周六</th><th>周日</th></tr>'+db.staff.map(s=>`<tr><td>${E(s.name)}</td>`+Array(7).fill(0).map(()=>`<td><select onchange="shift(${s.id},this.value)">${db.shifts.map(v=>`<option ${v===s.shift?"selected":""}>${E(v)}</option>`).join("")}</select></td>`).join("")+"</tr>").join("")+"</table>";
+analyticsBox.innerHTML=db.staff.map(s=>`<div class=card metric><small>${E(s.name)}业绩</small><b>¥${s.revenue}</b><small>完成 ${s.completed} 单</small></div>`).join("");settingsLoad();bind();}
+function table(kind,heads,rows,vals,id,type){document.getElementById(id).innerHTML='<table class=table><tr>'+heads.map(h=>`<th>${h}</th>`).join("")+'<th>操作</th></tr>'+rows.map(r=>`<tr>${vals(r).map(v=>`<td>${E(v)}</td>`).join("")}<td class=actions><button class="btn light" data-edit="${type}" data-id="${r.id}">编辑</button><button class="btn danger" data-del="${type}" data-id="${r.id}">删除</button></td></tr>`).join("")+"</table>"}
+function bind(){document.querySelectorAll("[data-status]").forEach(b=>b.onclick=()=>{let a=db.appointments.find(x=>x.id==b.dataset.status),old=a.status;a.status=db.statuses[(db.statuses.indexOf(old)+1)%db.statuses.length];S();render()});document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>open(b.dataset.edit,+b.dataset.id));document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(confirm("确定删除吗？")){db[key(b.dataset.del)]=db[key(b.dataset.del)].filter(x=>x.id!=b.dataset.id);S();render()}})}
+function open(type,id){edit={type,id};let o=id?db[key(type)].find(x=>x.id==id):{},fs=defs[type];mtitle.textContent=(id?"编辑":"新增")+type;form.innerHTML=fs.map(([k,l,t])=>{let v=o[k]??(k==="date"?T():""),opts=t==="service"?db.services.map(x=>x.name):t==="staff"?db.staff.map(x=>x.name):t==="level"?db.levels:t==="shift"?db.shifts:t==="status"?db.statuses:[];return `<label>${l}${opts.length?`<select data-f="${k}">${opts.map(x=>`<option ${x===v?"selected":""}>${E(x)}</option>`).join("")}</select>`:`<input data-f="${k}" type="${t}" value="${E(v)}">`}</label>`}).join("");modal.classList.add("show")}
+function saveForm(){let o=edit.id?db[key(edit.type)].find(x=>x.id==edit.id):{id:Date.now()};document.querySelectorAll("[data-f]").forEach(e=>o[e.dataset.f]=e.value);["amount","balance","points","total","revenue","completed","price","stock"].forEach(k=>{if(k in o)o[k]=+o[k]||0});if(!edit.id)db[key(edit.type)].push(o);S();close();render()}
+function close(){modal.classList.remove("show")}
+function settingsLoad(){shop.value=db.shop;levels.value=db.levels.join(",");shifts.value=db.shifts.join(",");statuses.value=db.statuses.join(",");rate.value=db.rate;logo.textContent=db.shop}
+function shift(id,v){db.staff.find(x=>x.id==id).shift=v;S();render()}
+function page(id){document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id===id));document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.page===id));title.textContent={home:"钱钱美甲工作台",appointments:"预约管理",customers:"顾客档案",staff:"技师数据",services:"服务项目",products:"产品统计",analytics:"数据分析",settings:"系统设置",today:"今日班次",schedule:"排班管理",members:"会员扣卡"}[id]||"钱钱美甲工作台";render()}
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>page(b.dataset.page));document.querySelectorAll("[data-new]").forEach(b=>b.onclick=()=>open("appointment"));document.querySelectorAll("[data-add]").forEach(b=>b.onclick=()=>open(b.dataset.add));document.getElementById("q").oninput=render;document.getElementById("clearq").onclick=()=>{q.value="";render()};cancel.onclick=close;save.onclick=saveForm;modal.onclick=e=>{if(e.target===modal)close()};saveSettings.onclick=()=>{db.shop=shop.value.trim()||"钱钱美甲工作台";db.levels=levels.value.split(",").map(x=>x.trim()).filter(Boolean);db.shifts=shifts.value.split(",").map(x=>x.trim()).filter(Boolean);db.statuses=statuses.value.split(",").map(x=>x.trim()).filter(Boolean);db.rate=+rate.value||0;S();settingsLoad();alert("设置已保存")};reset.onclick=()=>{if(confirm("确定恢复演示数据吗？")){localStorage.removeItem(K);location.reload()}};setInterval(()=>clock.textContent=new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"}),1000);render();
+</script></body></html>

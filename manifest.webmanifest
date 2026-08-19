@@ -1,10 +1,1 @@
-{
-  "name":"钱钱美甲工作台",
-  "short_name":"钱钱美甲",
-  "start_url":"./",
-  "display":"standalone",
-  "background_color":"#f8f7f8",
-  "theme_color":"#b96f83",
-  "lang":"zh-CN",
-  "icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
-}
+{"name":"钱钱美甲工作台","short_name":"钱钱美甲","start_url":"./","display":"standalone","background_color":"#f7f6f7","theme_color":"#b96f83","lang":"zh-CN"}
