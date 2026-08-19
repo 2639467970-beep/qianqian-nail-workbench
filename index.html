@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>钱钱美甲工作台</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f5f7;color:#18202a;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+button,input,select{font:inherit}.app{max-width:760px;margin:auto;min-height:100vh;background:#f4f5f7}
+.top{position:sticky;top:0;z-index:5;height:58px;background:#111827;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 14px}
+.brand{font-weight:700;font-size:16px}.menu{font-size:23px;background:none;border:0;color:#fff}.clock{font-size:12px;opacity:.8}
+main{padding:14px}.section-title{font-size:15px;font-weight:700;margin:16px 2px 10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{background:#fff;border-radius:14px;padding:14px;box-shadow:0 2px 10px #00000008}.metric small{color:#7b8490}.metric strong{display:block;font-size:24px;margin-top:5px}
+.card{background:#fff;border-radius:14px;padding:12px;margin-bottom:9px;box-shadow:0 2px 10px #00000008}.appt{display:flex;align-items:center;gap:10px}.avatar{width:40px;height:40px;border-radius:50%;background:#e5e7eb;display:grid;place-items:center;font-weight:700}.grow{flex:1}.name{font-weight:700}.muted{font-size:12px;color:#7b8490;margin-top:3px}.status{border:1px solid;padding:5px 8px;border-radius:8px;background:#fff;cursor:pointer;font-size:12px}.pending{color:#dc2626;border-color:#fca5a5}.done{color:#16a34a;border-color:#86efac}.cancel{color:#6b7280;border-color:#d1d5db}
+.scroll{display:flex;gap:8px;overflow:auto}.shift{min-width:110px}.shift b{display:block}.toolbar{display:flex;gap:8px;margin-bottom:10px}.toolbar input,.toolbar select{flex:1;border:1px solid #ddd;border-radius:10px;padding:9px;background:#fff}.btn{border:0;background:#111827;color:#fff;border-radius:10px;padding:9px 12px}
+.drawer{position:fixed;inset:0;background:#0006;z-index:10;display:none}.drawer.open{display:block}.panel{width:78%;max-width:320px;height:100%;background:#fff;padding:22px}.nav{display:block;width:100%;text-align:left;border:0;background:none;padding:13px 4px;border-radius:8px}.nav:hover{background:#f3f4f6}
+.page{display:none}.page.active{display:block}.empty{text-align:center;color:#9ca3af;padding:30px}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 4px;border-bottom:1px solid #eee;text-align:left}
+.fab{position:fixed;right:20px;bottom:22px;width:54px;height:54px;border-radius:50%;border:0;background:#111827;color:#fff;font-size:25px;box-shadow:0 6px 20px #0003}
+</style></head>
+<body><div class="app">
+<header class="top"><button class="menu" onclick="toggleDrawer()">☰</button><div class="brand">钱钱美甲工作台</div><div class="clock" id="clock"></div></header>
+<div class="drawer" id="drawer" onclick="if(event.target.id==='drawer')toggleDrawer()"><div class="panel">
+<h2>钱钱美甲工作台</h2>
+<button class="nav" onclick="show('home')">首页</button><button class="nav" onclick="show('appointments')">预约管理</button><button class="nav" onclick="show('customers')">顾客档案</button><button class="nav" onclick="show('members')">会员扣卡</button><button class="nav" onclick="show('staff')">技师数据</button><button class="nav" onclick="show('services')">服务项目</button><button class="nav" onclick="show('products')">产品统计</button>
+</div></div>
+<main>
+<section id="home" class="page active">
+<div class="section-title">今日看板</div><div class="grid">
+<div class="metric"><small>今日预约</small><strong id="mAppt">0</strong></div><div class="metric"><small>今日营收</small><strong id="mRevenue">¥0</strong></div>
+<div class="metric"><small>今日新客</small><strong id="mNew">0</strong></div><div class="metric"><small>在班技师</small><strong id="mStaff">0</strong></div></div>
+<div class="section-title">今日待办预约</div><div id="todayList"></div>
+<div class="section-title">本周排班快览</div><div class="scroll" id="shiftList"></div>
+</section>
+<section id="appointments" class="page"><div class="section-title">预约管理</div><div class="toolbar"><input id="searchAppt" placeholder="搜索顾客/手机号" oninput="render()"><button class="btn" onclick="addDemoAppointment()">新增</button></div><div id="apptTable"></div></section>
+<section id="customers" class="page"><div class="section-title">顾客档案</div><div id="customerTable"></div></section>
+<section id="members" class="page"><div class="section-title">会员扣卡</div><div class="card">会员扣卡入口已预留，可接入储值余额、积分和项目次数。</div></section>
+<section id="staff" class="page"><div class="section-title">技师数据</div><div id="staffTable"></div></section>
+<section id="services" class="page"><div class="section-title">服务项目</div><div id="serviceTable"></div></section>
+<section id="products" class="page"><div class="section-title">产品统计</div><div class="card">产品统计模块已预留，可继续接入库存、采购、消耗与毛利。</div></section>
+</main><button class="fab" onclick="addDemoAppointment()">＋</button></div>
+<script>
+const KEY='qianqian_v1';
+let db=JSON.parse(localStorage.getItem(KEY)||'null')||{
+ appointments:[
+ {id:1,date:new Date().toISOString().slice(0,10),time:'10:00',name:'小雨',phone:'13800000001',service:'纯色美甲',staff:'佳佳',status:'待确认',amount:198},
+ {id:2,date:new Date().toISOString().slice(0,10),time:'14:30',name:'思思',phone:'13800000002',service:'轻奢美睫',staff:'思思',status:'已完成',amount:268}
+ ],
+ customers:[
+ {name:'小雨',phone:'13800000001',level:'银卡',balance:500,points:198,total:0},
+ {name:'思思',phone:'13800000002',level:'金卡',balance:800,points:268,total:268}
+ ],
+ staff:[
+ {name:'佳佳',position:'美甲师',shift:'全天班',revenue:0,completed:0},
+ {name:'思思',position:'美睫师',shift:'午班',revenue:268,completed:1}
+ ],
+ services:[
+ {block:'美甲',cat:'基础',name:'纯色美甲',price:198},
+ {block:'美睫',cat:'基础',name:'轻奢美睫',price:268}
+ ],
+ analytics:{todayRevenue:268,monthRevenue:268,yearRevenue:268,lastDate:new Date().toISOString().slice(0,10)}
+};
+function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+function resetIfNewDay(){let d=new Date().toISOString().slice(0,10);if(db.analytics.lastDate!==d){db.analytics.todayRevenue=0;db.analytics.lastDate=d;db.appointments.forEach(a=>{if(a.date===d&&a.status==='已完成')db.analytics.todayRevenue+=+a.amount||0});save()}}
+function toggleStatus(id){let a=db.appointments.find(x=>x.id===id);if(!a)return;let old=a.status;let next=old==='待确认'?'已完成':old==='已完成'?'已取消':'待确认';if(old!=='已完成'&&next==='已完成'){db.analytics.todayRevenue+=(+a.amount||0);db.analytics.monthRevenue+=(+a.amount||0);db.analytics.yearRevenue+=(+a.amount||0);let c=db.customers.find(x=>x.phone===a.phone);if(c)c.total+=(+a.amount||0);let s=db.staff.find(x=>x.name===a.staff);if(s){s.revenue+=(+a.amount||0);s.completed+=1}}if(old==='已完成'&&next!=='已完成'){db.analytics.todayRevenue-=(+a.amount||0);db.analytics.monthRevenue-=(+a.amount||0);db.analytics.yearRevenue-=(+a.amount||0);let c=db.customers.find(x=>x.phone===a.phone);if(c)c.total=Math.max(0,c.total-(+a.amount||0));let s=db.staff.find(x=>x.name===a.staff);if(s){s.revenue=Math.max(0,s.revenue-(+a.amount||0));s.completed=Math.max(0,s.completed-1)}}a.status=next;save();render()}
+function addDemoAppointment(){let i=Date.now(),a={id:i,date:new Date().toISOString().slice(0,10),time:'16:00',name:'新顾客',phone:'138'+String(i).slice(-8),service:'纯色美甲',staff:'佳佳',status:'待确认',amount:198};db.appointments.push(a);if(!db.customers.find(c=>c.phone===a.phone))db.customers.push({name:a.name,phone:a.phone,level:'普通',balance:0,points:0,total:0});save();render()}
+function render(){resetIfNewDay();let today=new Date().toISOString().slice(0,10),arr=db.appointments.filter(a=>a.date===today),done=arr.filter(a=>a.status==='已完成');document.querySelector('#mAppt').textContent=arr.length;document.querySelector('#mRevenue').textContent='¥'+db.analytics.todayRevenue;document.querySelector('#mNew').textContent=db.customers.filter(c=>c.total===0).length;document.querySelector('#mStaff').textContent=db.staff.filter(s=>s.shift).length;
+document.querySelector('#todayList').innerHTML=arr.length?arr.map(a=>`<div class="card appt"><div class="avatar">${a.name[0]}</div><div class="grow"><div class="name">${a.name}</div><div class="muted">${a.time} · ${a.service} · ${a.staff}</div></div><button class="status ${a.status==='待确认'?'pending':a.status==='已完成'?'done':'cancel'}" onclick="toggleStatus(${a.id})">${a.status}</button></div>`).join(''):'<div class="empty">今日暂无预约</div>';
+let q=(document.querySelector('#searchAppt')?.value||'').trim();let aa=db.appointments.filter(a=>!q||a.name.includes(q)||a.phone.includes(q));document.querySelector('#apptTable').innerHTML='<table><tr><th>时间</th><th>顾客</th><th>项目</th><th>技师</th><th>状态</th></tr>'+aa.map(a=>`<tr><td>${a.date} ${a.time}</td><td>${a.name}</td><td>${a.service}</td><td>${a.staff}</td><td><button class="status" onclick="toggleStatus(${a.id})">${a.status}</button></td></tr>`).join('')+'</table>';
+document.querySelector('#customerTable').innerHTML='<table><tr><th>姓名</th><th>等级</th><th>余额</th><th>积分</th><th>累计消费</th></tr>'+db.customers.map(c=>`<tr><td>${c.name}</td><td>${c.level}</td><td>¥${c.balance}</td><td>${c.points}</td><td>¥${c.total}</td></tr>`).join('')+'</table>';
+document.querySelector('#staffTable').innerHTML='<table><tr><th>技师</th><th>职位</th><th>班次</th><th>业绩</th><th>完成单数</th></tr>'+db.staff.map(s=>`<tr><td>${s.name}</td><td>${s.position}</td><td>${s.shift}</td><td>¥${s.revenue}</td><td>${s.completed}</td></tr>`).join('')+'</table>';
+document.querySelector('#serviceTable').innerHTML='<table><tr><th>板块</th><th>分类</th><th>项目</th><th>单价</th></tr>'+db.services.map(s=>`<tr><td>${s.block}</td><td>${s.cat}</td><td>${s.name}</td><td>¥${s.price}</td></tr>`).join('')+'</table>';
+document.querySelector('#shiftList').innerHTML=db.staff.map(s=>`<div class="card shift"><b>${s.name}</b><span class="muted">${s.position}</span><div>${s.shift}</div></div>`).join('');}
+function show(id){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');toggleDrawer();render()}
+function toggleDrawer(){document.getElementById('drawer').classList.toggle('open')}
+function tick(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});resetIfNewDay()}setInterval(tick,1000);tick();render();
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js')}\n</script></body></html>
